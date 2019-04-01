@@ -9,6 +9,8 @@ q3_col <- c(5, 2, 5, 4, 1)
 q4_col <- c(5, 5, 5, NA, 2) # NA is inserted in place of the missing data for this attribute
 q5_col <- c(5, 5, 2, NA, 1)
 
+
+
 # Create column names for data frame
 column_names <- c("Date", "Country", "Gender", "Age", "Q1", "Q2", "Q3", "Q4", "Q5")
 
@@ -41,6 +43,7 @@ managers$AgeCat[is.na(managers$Age)] <- "Elderly"
 # We'll srore the ordinal factored data in variable 'AgeCat'
 AgeCat <- factor(managers$AgeCat, order = TRUE, levels = c("Young", "Middle Aged", "Elderly"))
 
+# managers$Date <- format(as.Date(managers$Date))
 # Replace managers's AgeCat attribute with newly ordinal foctored data
 managers$AgeCat <- AgeCat
 
@@ -63,10 +66,10 @@ managers <- data.frame(managers, mean_value)
 managers
 
 # Change the name of this column to "mean value"
-names(managers)[12] <- "mean value"
+names(managers)[12] <- "mean_value"
 
 # Change name of summary_col to "Answer total"
-names(managers)[11] <- "Answer total"
+names(managers)[11] <- "Answer_total"
 
 # Show 
 str(managers)
@@ -77,6 +80,66 @@ new_managers_data <- read.csv("MoreData(1).csv",header = TRUE)
 # new_managers_data
 str(new_managers_data)
 attach(new_managers_data)
-new_managers_data_subset <- subset(new_managers_data, select = c(Date, Country, Q1, Q2, Q3, Q4, Q5))
+
+
+new_managers_data_subset <- subset(new_managers_data, select = c(Date, Country, Gender, Age, Q1, Q2, Q3, Q4, Q5))
+
+# new_managers_data_[is.na(new_managers_data_subset)] <- NA
+
+# new_managers_data$Date <- as.Date(new_managers_data$Date, format = "%m/%d/%Y")
+# new_managers_data_subset$Date <- as.Date(new_managers_data_subset$Date, format = "%m/%d/%Y")
+# new_managers_data_subset$Date <- as.Date(new_managers_data_subset$Date)
+#blank_vector <- c()
+
+
+# new_managers_data_subset$AgeCat <- NA
+# new_managers_data_subset$mean_value <- NA
+# new_managers_data_subset$Answer_total <- NA
+
+attach(new_managers_data_subset)
+new_managers_data_subset$Date <- as.Date(new_managers_data_subset$Date, format = "%m/%d/%Y")
+managers$Date <- as.Date(managers$Date, format = "%Y-%m-%d")
 new_managers_data_subset
+
+new_managers_data_subset$AgeCat[new_managers_data_subset$Age >= 45] <- "Elderly"
+new_managers_data_subset$AgeCat[new_managers_data_subset$Age >= 26 & new_managers_data_subset$Age <= 44] <- "Middle Aged"
+new_managers_data_subset$AgeCat[new_managers_data_subset$Age <= 25] <- "Young"
+new_managers_data_subset$AgeCat[is.na(new_managers_data_subset$Age)] <- "Elderly"
+
+
+new_managers_data_subset$Answer_total <- new_managers_data_subset$Q1 + new_managers_data_subset$Q2 + new_managers_data_subset$Q3 + new_managers_data_subset$Q4 + new_managers_data_subset$Q5
+
+# Add summary_col to the end of the data frame
+new_managers_data_subset <- rbind(new_managers_data_subset,Answer_total)
+
+
+# Calculate mean value for each row
+mean_value <- rowMeans(new_managers_data_subset[5:9])
+
+# Add mean_value to end of managers data frame
+new_managers_data_subset <- data.frame(new_managers_data_subset, mean_value)
+
+# Show data frame contents
+new_managers_data_subset
+
+# Change the name of this column to "mean value"
+
+
+# Change name of summary_col to "Answer total"
+
+
+
+
+str(new_managers_data_subset)
+
+# managers_data_subset  <- subset(managers, select = c(Date, Country, Gender, Age, Q1, Q2, Q3, Q4, Q5))
+
+# managers_data_subset_exclude[!is.na(managers_data_subset_exclude)] <- NA
+# managers
+
+# combining the managers data and new managers data
+new_manager_combined_data <- rbind(managers, new_managers_data_subset)
+new_manager_combined_data
+
+str(new_manager_combined_data)
 
